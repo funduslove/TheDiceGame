@@ -1,0 +1,31 @@
+export const TILE_WIDTH = 64;
+export const TILE_HEIGHT = 32;
+
+export const COLORS = {
+  floor: '#2a3a5c',
+  floorStroke: '#3a4a6c',
+  wall: '#4a4a6a',
+  wallSide: '#3a3a5a',
+  wallTop: '#5a5a7a',
+  target: '#2a5a3a',
+  targetStroke: '#4a8a5a',
+  pit: '#0a0a1e',
+  destructible: '#5a4a3a',
+  destructibleStroke: '#7a6a5a',
+  void: 'transparent',
+  player: '#7fdbca',
+  playerStroke: '#5abba0',
+  dieWhite: '#e8e8e8',
+  dieWhiteSide: '#c8c8c8',
+  dieWhiteDark: '#a8a8a8',
+  dieRed: '#e85555',
+  dieRedSide: '#c83535',
+  dieRedDark: '#a82525',
+  dieBlue: '#5588ee',
+  dieBlueSide: '#3568cc',
+  dieBlueDark: '#2548aa',
+  pip: '#1a1a2e',
+  pipWhite: '#ffffff',
+  explosion: '#ff6644',
+  gridLine: '#2a3050',
+} as const;

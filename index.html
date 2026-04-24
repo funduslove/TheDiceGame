@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TheDiceGame</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a2e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+    #app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    canvas {
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #16213e;
+    }
+    #hud {
+      display: flex;
+      gap: 24px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    #hud span { color: #7fdbca; }
+    #level-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: #c792ea;
+    }
+    #hint {
+      font-size: 13px;
+      color: #ffcb6b;
+      max-width: 600px;
+      text-align: center;
+    }
+    #win-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    #win-overlay.show { display: flex; }
+    #win-message {
+      background: #1a1a2e;
+      border: 2px solid #c792ea;
+      border-radius: 12px;
+      padding: 32px 48px;
+      text-align: center;
+    }
+    #win-message h2 { color: #c3e88d; margin-bottom: 12px; }
+    #win-message p { color: #82aaff; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="level-name"></div>
+    <canvas id="game-canvas" width="800" height="600"></canvas>
+    <div id="hint"></div>
+    <div id="hud">
+      <div>Turns: <span id="turn-count">0</span></div>
+      <div>Undo: <span>Z</span> | Redo: <span>Y</span> | Reset: <span>R</span></div>
+    </div>
+  </div>
+  <div id="win-overlay">
+    <div id="win-message">
+      <h2>Level Complete!</h2>
+      <p>Press <strong>Enter</strong> or <strong>Space</strong> for next level</p>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
