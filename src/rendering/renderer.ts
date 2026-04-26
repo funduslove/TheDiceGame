@@ -1,5 +1,5 @@
-import { TILE_WIDTH, TILE_HEIGHT, COLORS } from '../constants';
-import type { GameState, Die } from '../core/types';
+import { TILE_HEIGHT, COLORS } from '../constants';
+import type { GameState } from '../core/types';
 import { CellType } from '../core/types';
 import { gridToScreen } from './isoMath';
 import type { ScreenPos } from './isoMath';
@@ -13,11 +13,10 @@ export interface Camera {
 }
 
 interface DrawableEntity {
-  readonly sortKey: number; // row + col for depth sorting
+  readonly sortKey: number;
   draw(ctx: CanvasRenderingContext2D): void;
 }
 
-/** Main render function: draws the full game scene. */
 export function render(
   ctx: CanvasRenderingContext2D,
   state: GameState,
@@ -25,11 +24,13 @@ export function render(
   animations?: AnimationManager,
 ) {
   const canvas = ctx.canvas;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Warm background
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.save();
 
-  // Translate so the grid is centered on the canvas
   const rows = state.grid.length;
   const cols = rows > 0 ? (state.grid[0]?.length ?? 0) : 0;
   const centerRow = (rows - 1) / 2;
@@ -40,10 +41,10 @@ export function render(
   const camY = camera?.offsetY ?? 0;
   ctx.translate(
     canvas.width / 2 - gridCenter.x + camX,
-    canvas.height / 2 - gridCenter.y + camY,
+    canvas.height / 2 - gridCenter.y + camY - 20,
   );
 
-  // --- Draw tiles in depth order (row + col ascending) ---
+  // Draw tiles back-to-front
   const tileOrder: Array<{ row: number; col: number; sortKey: number }> = [];
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
@@ -60,7 +61,7 @@ export function render(
     drawTile(ctx, cell.type, screen.x, screen.y);
   }
 
-  // --- Collect entities and sort by depth ---
+  // Entities sorted by depth
   const entities: DrawableEntity[] = [];
 
   // Player
@@ -72,9 +73,8 @@ export function render(
   } else {
     playerScreen = gridToScreen(playerPos);
   }
-  const playerSortKey = playerPos.row + playerPos.col;
   entities.push({
-    sortKey: playerSortKey,
+    sortKey: playerPos.row + playerPos.col,
     draw: (c) => drawPlayer(c, playerScreen.x, playerScreen.y),
   });
 
@@ -87,9 +87,8 @@ export function render(
     } else {
       dieScreen = gridToScreen(die.pos);
     }
-    const dieSortKey = die.pos.row + die.pos.col;
     entities.push({
-      sortKey: dieSortKey,
+      sortKey: die.pos.row + die.pos.col,
       draw: (c) => {
         drawEntityShadow(c, dieScreen.x, dieScreen.y);
         drawDie(c, die, dieScreen.x, dieScreen.y);
@@ -97,9 +96,7 @@ export function render(
     });
   }
 
-  // Sort entities back-to-front
   entities.sort((a, b) => a.sortKey - b.sortKey);
-
   for (const entity of entities) {
     entity.draw(ctx);
   }
@@ -107,44 +104,111 @@ export function render(
   ctx.restore();
 }
 
-/** Draw the player as a colored diamond/circle shape. */
 function drawPlayer(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  const radius = 10;
-  const yOffset = -TILE_HEIGHT; // raise player above tile like dice
+  const baseY = y - TILE_HEIGHT * 0.5;
 
-  // Shadow
+  // Shadow on ground
   ctx.save();
-  ctx.globalAlpha = 0.3;
+  ctx.globalAlpha = 0.2;
   ctx.fillStyle = '#000';
   ctx.beginPath();
-  ctx.ellipse(x, y + 2, radius * 1.2, radius * 0.5, 0, 0, Math.PI * 2);
+  ctx.ellipse(x, y + 4, 16, 8, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
-  // Body - diamond shape
-  const dy = y + yOffset;
-  const hw = 10;
-  const hh = 14;
+  // Body (rounded rectangle shape)
+  const bodyW = 14;
+  const bodyH = 22;
+  const bodyY = baseY - bodyH;
 
+  // Legs
+  ctx.fillStyle = COLORS.playerDark;
+  ctx.fillRect(x - 6, baseY - 6, 4, 8);
+  ctx.fillRect(x + 2, baseY - 6, 4, 8);
+
+  // Body
   ctx.beginPath();
-  ctx.moveTo(x, dy - hh);
-  ctx.lineTo(x + hw, dy);
-  ctx.lineTo(x, dy + hh);
-  ctx.lineTo(x - hw, dy);
-  ctx.closePath();
+  roundedRect(ctx, x - bodyW / 2, bodyY, bodyW, bodyH, 4);
   ctx.fillStyle = COLORS.player;
   ctx.fill();
   ctx.strokeStyle = COLORS.playerStroke;
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  // Highlight on upper portion
+  // Body highlight
   ctx.beginPath();
-  ctx.moveTo(x, dy - hh);
-  ctx.lineTo(x + hw * 0.5, dy - hh * 0.3);
-  ctx.lineTo(x, dy);
-  ctx.lineTo(x - hw * 0.5, dy - hh * 0.3);
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  roundedRect(ctx, x - bodyW / 2 + 2, bodyY + 2, bodyW / 2 - 2, bodyH - 8, 2);
+  ctx.fillStyle = COLORS.playerLight;
+  ctx.globalAlpha = 0.25;
   ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Head
+  const headR = 10;
+  const headY = bodyY - headR + 2;
+  ctx.beginPath();
+  ctx.arc(x, headY, headR, 0, Math.PI * 2);
+  ctx.fillStyle = COLORS.playerSkin;
+  ctx.fill();
+  ctx.strokeStyle = COLORS.playerStroke;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Hair
+  ctx.beginPath();
+  ctx.arc(x, headY - 2, headR, Math.PI * 1.1, Math.PI * 1.9);
+  ctx.fillStyle = COLORS.playerHair;
+  ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#333';
+  ctx.beginPath();
+  ctx.arc(x - 3.5, headY, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + 3.5, headY, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Smile
+  ctx.strokeStyle = '#885544';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(x, headY + 2, 3, 0.1, Math.PI - 0.1);
+  ctx.stroke();
+
+  // Arms
+  ctx.strokeStyle = COLORS.playerDark;
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  // Left arm
+  ctx.beginPath();
+  ctx.moveTo(x - bodyW / 2, bodyY + 6);
+  ctx.lineTo(x - bodyW / 2 - 6, bodyY + 16);
+  ctx.stroke();
+  // Right arm
+  ctx.beginPath();
+  ctx.moveTo(x + bodyW / 2, bodyY + 6);
+  ctx.lineTo(x + bodyW / 2 + 6, bodyY + 16);
+  ctx.stroke();
+  ctx.lineCap = 'butt';
+}
+
+function roundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
 }

@@ -1,31 +1,52 @@
-export const TILE_WIDTH = 64;
-export const TILE_HEIGHT = 32;
+export const TILE_WIDTH = 128;
+export const TILE_HEIGHT = 64;
 
 export const COLORS = {
-  floor: '#2a3a5c',
-  floorStroke: '#3a4a6c',
-  wall: '#4a4a6a',
-  wallSide: '#3a3a5a',
-  wallTop: '#5a5a7a',
-  target: '#2a5a3a',
-  targetStroke: '#4a8a5a',
-  pit: '#0a0a1e',
-  destructible: '#5a4a3a',
-  destructibleStroke: '#7a6a5a',
+  // Warm stone floor
+  floor: '#c4b59a',
+  floorLight: '#d4c5aa',
+  floorStroke: '#a89878',
+  // Walls - solid stone
+  wall: '#7a6e5a',
+  wallSide: '#5a5040',
+  wallTop: '#8a7e6a',
+  wallStroke: '#4a4030',
+  // Target - glowing green
+  target: '#88c878',
+  targetLight: '#a8e898',
+  targetStroke: '#58a848',
+  targetGlow: '#66dd55',
+  // Pit - dark void
+  pit: '#2a2018',
+  pitInner: '#1a1008',
+  pitStroke: '#4a3828',
+  // Destructible - cracked brown
+  destructible: '#9a7a55',
+  destructibleSide: '#7a5a35',
+  destructibleDark: '#6a4a25',
+  destructibleStroke: '#5a3a15',
   void: 'transparent',
-  player: '#7fdbca',
-  playerStroke: '#5abba0',
-  dieWhite: '#e8e8e8',
-  dieWhiteSide: '#c8c8c8',
-  dieWhiteDark: '#a8a8a8',
-  dieRed: '#e85555',
-  dieRedSide: '#c83535',
-  dieRedDark: '#a82525',
-  dieBlue: '#5588ee',
-  dieBlueSide: '#3568cc',
-  dieBlueDark: '#2548aa',
-  pip: '#1a1a2e',
+  // Player - bright teal character
+  player: '#44ccaa',
+  playerDark: '#2a9977',
+  playerLight: '#77eedd',
+  playerSkin: '#ffcc99',
+  playerHair: '#553322',
+  playerStroke: '#227755',
+  // Dice - big, bold, colorful
+  dieWhite: '#f5f0e8',
+  dieWhiteSide: '#d8d0c4',
+  dieWhiteDark: '#bab2a6',
+  dieRed: '#ee4444',
+  dieRedSide: '#cc2222',
+  dieRedDark: '#aa1111',
+  dieBlue: '#4488ee',
+  dieBlueSide: '#2266cc',
+  dieBlueDark: '#1144aa',
+  pip: '#333322',
   pipWhite: '#ffffff',
   explosion: '#ff6644',
-  gridLine: '#2a3050',
+  gridLine: '#b0a080',
+  // Background
+  bg: '#e8dcc8',
 } as const;

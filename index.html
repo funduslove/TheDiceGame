@@ -7,13 +7,13 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #1a1a2e;
+      background: #d8ccb4;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       font-family: 'Segoe UI', system-ui, sans-serif;
-      color: #e0e0e0;
+      color: #3a3020;
       overflow: hidden;
     }
     #app {
@@ -23,53 +23,56 @@
       gap: 12px;
     }
     canvas {
-      border: 2px solid #333;
-      border-radius: 8px;
-      background: #16213e;
+      border: 3px solid #a89878;
+      border-radius: 12px;
+      background: #e8dcc8;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     }
     #hud {
       display: flex;
       gap: 24px;
       font-size: 14px;
-      opacity: 0.8;
+      opacity: 0.7;
     }
-    #hud span { color: #7fdbca; }
+    #hud span { color: #2a8866; font-weight: 600; }
     #level-name {
-      font-size: 20px;
-      font-weight: 600;
-      color: #c792ea;
+      font-size: 22px;
+      font-weight: 700;
+      color: #5a4030;
     }
     #hint {
-      font-size: 13px;
-      color: #ffcb6b;
-      max-width: 600px;
+      font-size: 14px;
+      color: #7a6040;
+      max-width: 700px;
       text-align: center;
+      font-style: italic;
     }
     #win-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.5);
       justify-content: center;
       align-items: center;
       z-index: 100;
     }
     #win-overlay.show { display: flex; }
     #win-message {
-      background: #1a1a2e;
-      border: 2px solid #c792ea;
-      border-radius: 12px;
-      padding: 32px 48px;
+      background: #f5efe4;
+      border: 3px solid #88c878;
+      border-radius: 16px;
+      padding: 36px 52px;
       text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
     }
-    #win-message h2 { color: #c3e88d; margin-bottom: 12px; }
-    #win-message p { color: #82aaff; }
+    #win-message h2 { color: #44aa33; margin-bottom: 12px; font-size: 28px; }
+    #win-message p { color: #5a4030; }
   </style>
 </head>
 <body>
   <div id="app">
     <div id="level-name"></div>
-    <canvas id="game-canvas" width="800" height="600"></canvas>
+    <canvas id="game-canvas" width="960" height="700"></canvas>
     <div id="hint"></div>
     <div id="hud">
       <div>Turns: <span id="turn-count">0</span></div>
